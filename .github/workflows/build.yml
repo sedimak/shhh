@@ -1,0 +1,33 @@
+name: Build macOS App
+
+on:
+  # Дозволяє запускати збірку вручну з вкладки Actions
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11' # Вкажіть версію Python, яку ви використовуєте
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pyinstaller
+
+    - name: Build the application
+      run: pyinstaller --name "PhotoNamerDBX" --onefile --windowed photo_namer_dropbox.py
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: PhotoNamerDBX-macOS
+        path: dist/PhotoNamerDBX.app
